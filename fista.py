@@ -4,7 +4,7 @@ ERR = 1e-12
 L0 = 1.0
 eta = 1.2
 
-def fista_solver(object_func, derivative_func, x0, L=None):
+def fista_solve(object_func, derivative_func, x0, L=None):
     cur_y = x0
     if L is None:
         backtracking = True
