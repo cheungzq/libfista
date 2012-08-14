@@ -8,8 +8,8 @@ L1_reg = False
 def set_fista_param(tol=1e-12, Li0=1.0, eta=1.2):
     global TOL, L0, ETA
     TOL = tol
-    L0 = Li0 
-    ETA = eta
+    L0 = float(Li0)
+    ETA = float(eta)
 
 def _pl_step(y, L, der_at_y, squared_der_at_y = 0, obj_at_y = 0):
     pl = y - 1/L * der_at_y
@@ -46,7 +46,7 @@ def fista_solve(object_func, derivative_func, x0, L=None, with_L1_reg = False):
             # find Lk
             ik = 0
             eta_ik = ETA
-            obj_at_y = object_func(cur_y)
+            obj_at_y = object_func(cur_y) - np.sum(np.abs(cur_y))
             cur_L = L
             squared_der_at_y = (der_at_y.dot(der_at_y)) 
             while True:
@@ -69,15 +69,19 @@ def fista_solve(object_func, derivative_func, x0, L=None, with_L1_reg = False):
                     high = mid
                 else:
                     low = mid+1
-            L *= ETA**low 
+            if low == 0:
+                pl, ql = _pl_step(cur_y, L/ETA, der_at_y, squared_der_at_y, obj_at_y)
+                if object_func(pl) <= ql:
+                    L /= ETA
+            else:
+                L *= ETA**low 
         last_x = cur_x
-        cur_x,ql = _pl_step(cur_y, L, der_at_y)
+        cur_x = _pl_step(cur_y, L, der_at_y)[0]
         last_t = cur_t
         cur_t = (1+np.sqrt(1+4*(cur_t**2)))/2
         last_y = cur_y
         cur_y = cur_x + (last_t - 1)/cur_t * (cur_x - last_x)
         step += 1
-
         if (np.abs(object_func(last_x) - object_func(cur_x)) < TOL):
             break
 

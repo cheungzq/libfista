@@ -1,4 +1,3 @@
-import pylab
 import numpy as np
 import fista
 
@@ -12,7 +11,7 @@ class LogisticSolver:
         self.x = x
         self.y = y
         m = len(x)
-        fista.set_fista_param(tol=self.tol, Li0=1.5)
+        fista.set_fista_param(tol=self.tol, Li0=1, eta=2.0)
         res, steps = fista.fista_solve(self._objective, self._derivative,
                                        np.ones(m+1), 
                                        with_L1_reg=(self.reg != 'L2'))
@@ -50,6 +49,7 @@ if __name__=='__main__':
     from sklearn import linear_model
 
     data = load_iris()
+    print 'load done'
     ls = LogisticSolver(L1_or_L2='L1', C=1.0, tol=1e-5)
     x = np.array([[-3,3],[0,1],[-1,-1],[1,3],[3,1],[1,-1]],dtype=float)
     y = np.array([1,1,1,-1,-1,-1])

@@ -48,4 +48,4 @@ def test_fista_pd_L1():
     res,step = fista.fista_solve(pd_with_L1, der_pd, np.array([0.0971,0.8235]),
                              with_L1_reg=True) 
     assert_almost_equal(res[0], 0)
-    assert_almost_equal(res[1], 1.70026, 4)
+    assert_almost_equal(res[1], 1.70009, 4)
