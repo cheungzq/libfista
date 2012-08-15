@@ -29,23 +29,31 @@ def der_pd(x):
     return 2*np.dot(A.T, np.dot(A,x)-b)
 
 def test_fista_quard_L1():
-    res,step = fista.fista_solve(quard_with_L1, der_quard,
-                             np.array([100,100]), L=2, with_L1_reg=True)
+    res,opt_v,step = fista.fista_solve(quard_with_L1, der_quard,
+                                       np.array([100,100]), L=2,
+                                       with_L1_reg=True)
     assert_almost_equal(res[0],0.5)
     assert_almost_equal(res[1],0.5)
+    assert_almost_equal(opt_v, 1.5)
 
 def test_fista_quard():
-    res,step = fista.fista_solve(quard, der_quard, np.array([100,100]), L=2)
+    res,opt_v,step = fista.fista_solve(quard, der_quard, np.array([100,100]),
+                                       L=2)
     assert_almost_equal(res[0], 1)
     assert_almost_equal(res[1], 1)
+    assert_almost_equal(opt_v, 0)
 
 def test_fista_log_L1():
-    res,step = fista.fista_solve(log_with_L1, der_log, np.array([100]), with_L1_reg=True)
+    res,opt_v,step = fista.fista_solve(log_with_L1, der_log, np.array([100]),
+                                       with_L1_reg=True)
     assert_almost_equal(res[0], 0)
+    assert_almost_equal(opt_v, np.log(2))
 
 def test_fista_pd_L1():
     fista.set_fista_param(tol=1e-4, eta=2)
-    res,step = fista.fista_solve(pd_with_L1, der_pd, np.array([0.0971,0.8235]),
-                             with_L1_reg=True) 
+    res,opt_v,step = fista.fista_solve(pd_with_L1, der_pd, 
+                                       np.array([0.0971,0.8235]),
+                                       with_L1_reg=True) 
     assert_almost_equal(res[0], 0)
     assert_almost_equal(res[1], 1.70009, 4)
+
